@@ -13,6 +13,10 @@ import Sidebar from "./components/Sidebar";
 import AddNewAdmin from "./components/AddNewAdmin";
 import "./App.css";
 
+
+
+
+
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, admin, setAdmin } =
     useContext(Context);

@@ -31,9 +31,12 @@ const Navbar = () => {
 
   return (
     <>
+    {/* <marquee><b> QuickDoc. </b>Secure Access to Your Healthcare. 🔒</marquee> */}
       <nav className={"container"}>
         <div className="logo">
-          <img src="/logo.png" alt="logo" className="logo-img" />
+          <Link to={"/"}>
+            <img src="/logo.png" alt="logo" className="logo-img" />
+          </Link>
         </div>
         <div className={show ? "navLinks showmenu" : "navLinks"}>
           <div className="links">
@@ -48,11 +51,19 @@ const Navbar = () => {
             </Link>
           </div>
           {isAuthenticated ? (
-            <button className="logoutBtn btn" onClick={handleLogout}>
+            <button
+              style={{ cursor: "pointer" }}
+              className="logoutBtn btn"
+              onClick={handleLogout}
+            >
               LOGOUT
             </button>
           ) : (
-            <button className="loginBtn btn" onClick={goToLogin}>
+            <button
+              style={{ cursor: "pointer" }}
+              className="loginBtn btn"
+              onClick={goToLogin}
+            >
               LOGIN
             </button>
           )}

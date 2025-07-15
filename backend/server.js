@@ -1,5 +1,8 @@
 import app from "./app.js";
 import cloudinary from "cloudinary";
+import appointmentRouter from './router/appointmentRouter.js';
+app.use("/api/appointment", appointmentRouter);
+
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

@@ -77,6 +77,12 @@ const Departments = () => {
             "tablet",
             "mobile",
           ]}
+          infinite={true} // Enable infinite loop
+          autoPlay={true} // Enable auto-play
+          autoPlaySpeed={2000} // Set auto-play speed (3 seconds)
+          transitionDuration={500} // Set transition duration
+          swipeable={false} // Disable manual swiping
+          draggable={false} // Disable manual dragging
         >
           {departmentsArray.map((depart, index) => {
             return (

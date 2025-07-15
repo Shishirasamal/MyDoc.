@@ -41,13 +41,14 @@ const MessageForm = () => {
         <form onSubmit={handleMessage}>
           <div>
             <input
-              type="text"
+              type="text" pattern="[A-Za-z\s]+" title="Only letters allowed" 
+
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
             <input
-              type="text"
+              type="text" pattern="[A-Za-z\s]+" title="Only letters allowed"
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -74,7 +75,9 @@ const MessageForm = () => {
             onChange={(e) => setMessage(e.target.value)}
           />
           <div style={{ justifyContent: "center", alignItems: "center" }}>
-            <button type="submit">Send</button>
+            <button type="submit" style={{ cursor: "pointer" }}>
+              Send
+            </button>
           </div>
         </form>
         <img src="/Vector.png" alt="vector" />

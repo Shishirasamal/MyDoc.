@@ -31,6 +31,12 @@ const AddNewDoctor = () => {
     "Physical Therapy",
     "Dermatology",
     "ENT",
+    "Anaesthesiology",
+    "Cardio-Thoracic & Vascular Surgery",
+    "Endocrinology",
+    "Gastroenterology",
+    "General Medicine",
+    "General Surgery",
   ];
 
   const handleAvatar = (e) => {
@@ -43,8 +49,29 @@ const AddNewDoctor = () => {
     };
   };
 
+  const calculateAge = (dob) => {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const month = today.getMonth() - birthDate.getMonth();
+  
+    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1;
+    }
+    return age;
+  };
+  
+
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
+  
+    // Calculate age from the date of birth (dob)
+    const age = calculateAge(dob); // This calls the calculateAge function
+    if (age < 25) {
+      toast.error("Doctor must be older than 25 years.");
+      return; // Stops the form submission if the age is invalid
+    }
+  
     try {
       const formData = new FormData();
       formData.append("firstName", firstName);
@@ -57,6 +84,7 @@ const AddNewDoctor = () => {
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
       formData.append("docAvatar", docAvatar);
+  
       await axios
         .post("http://localhost:4000/api/v1/user/doctor/addnew", formData, {
           withCredentials: true,
@@ -79,6 +107,7 @@ const AddNewDoctor = () => {
       toast.error(error.response.data.message);
     }
   };
+  
 
   if (!isAuthenticated) {
     return <Navigate to={"/login"} />;
@@ -86,7 +115,7 @@ const AddNewDoctor = () => {
   return (
     <section className="page">
       <section className="container add-doctor-form">
-        <img src="/logo.png" alt="logo" className="logo"/>
+        <img src="/logo.png" alt="logo" className="logo" style={{height: "270px"}} />
         <h1 className="form-title">REGISTER A NEW DOCTOR</h1>
         <form onSubmit={handleAddNewDoctor}>
           <div className="first-wrapper">
@@ -101,13 +130,15 @@ const AddNewDoctor = () => {
             </div>
             <div>
               <input
-                type="text"
+                // type="text" pattern="[A-Za-z\s]+" title="Only letters allowed"
+                   type="text" pattern="^[A-Za-z\s.]+$" title="Only letters, spaces, and periods allowed"
+
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
               <input
-                type="text"
+                type="text" pattern="[A-Za-z\s]+" title="Only letters allowed"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -126,7 +157,7 @@ const AddNewDoctor = () => {
               />
               <input
                 type="number"
-                placeholder="NIC"
+                placeholder="Adhar No."
                 value={nic}
                 onChange={(e) => setNic(e.target.value)}
               />
@@ -165,7 +196,9 @@ const AddNewDoctor = () => {
                   );
                 })}
               </select>
-              <button type="submit">Register New Doctor</button>
+              <button style={{ cursor: "pointer" }} type="submit">
+                Register New Doctor
+              </button>
             </div>
           </div>
         </form>

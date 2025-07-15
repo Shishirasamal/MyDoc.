@@ -39,11 +39,11 @@ const Footer = () => {
 
   return (
     <>
-      <footer className={"container"}>
+      <footer className={"container"} style={{backgroundColor:"rgb(118, 178, 245)"}}>
         <hr />
         <div className="content">
           <div>
-            <img src="/logo.png" alt="logo" className="logo-img"/>
+            <img src="/logo.png" alt="logo" className="logo-img" />
           </div>
           <div>
             <h4>Quick Links</h4>
@@ -68,18 +68,20 @@ const Footer = () => {
             <h4>Contact</h4>
             <div>
               <FaPhone />
-              <span>999-999-9999</span>
+              <span>+91-1234567890</span>
             </div>
             <div>
               <MdEmail />
-              <span>zeelab@gmail.com</span>
+              <span>quickdoc@gmail.com</span>
             </div>
             <div>
               <FaLocationArrow />
-              <span>Karachi, Pakistan</span>
+              <span>Bhubaneswar, India</span>
             </div>
           </div>
         </div>
+        <br></br><br></br>
+        <div><center><p>Copyright © 2021 All Rights Reserved.</p></center></div>
       </footer>
     </>
   );

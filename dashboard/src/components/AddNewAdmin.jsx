@@ -55,18 +55,18 @@ const AddNewAdmin = () => {
   return (
     <section className="page">
       <section className="container form-component add-admin-form">
-      <img src="/logo.png" alt="logo" className="logo"/>
+        <img src="/logo.png" alt="logo" className="logo" style={{height: "270px"}}/>
         <h1 className="form-title">ADD NEW ADMIN</h1>
         <form onSubmit={handleAddNewAdmin}>
           <div>
             <input
-              type="text"
+              type="text" pattern="[A-Za-z\s]+" title="Only letters allowed"
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
             <input
-              type="text"
+              type="text" pattern="[A-Za-z\s]+" title="Only letters allowed"
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -89,7 +89,7 @@ const AddNewAdmin = () => {
           <div>
             <input
               type="number"
-              placeholder="NIC"
+              placeholder="Adhar No."
               value={nic}
               onChange={(e) => setNic(e.target.value)}
             />
@@ -114,7 +114,9 @@ const AddNewAdmin = () => {
             />
           </div>
           <div style={{ justifyContent: "center", alignItems: "center" }}>
-            <button type="submit">ADD NEW ADMIN</button>
+            <button style={{ cursor: "pointer" }} type="submit">
+              ADD NEW ADMIN
+            </button>
           </div>
         </form>
       </section>

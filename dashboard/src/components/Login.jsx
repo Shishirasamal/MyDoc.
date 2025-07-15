@@ -44,10 +44,15 @@ const Login = () => {
 
   return (
     <>
-      <section className="container form-component">
-        <img src="/logo.png" alt="logo" className="logo" />
-        <h1 className="form-title">WELCOME TO ZEECARE</h1>
-        <p>Only Admins Are Allowed To Access These Resources!</p>
+      <section className="container form-component" style={{backgroundImage: "url(" + "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUvhi-mYdaquhn2WlKlHKiP6VEQQ0izxhKg&s" + ")",
+      backgroundPosition: 'center',
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat'
+        
+      }}>
+        <img src="/logo.png" alt="logo" className="logo" style={{height: "270px"}}/>
+        <h1 className="form-title">WELCOME TO QUICKDOC.</h1>
+        <p><b>Only Admins Are Allowed To Access These Resources!</b></p>
         <form onSubmit={handleLogin}>
           <input
             type="text"

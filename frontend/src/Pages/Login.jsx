@@ -48,8 +48,7 @@ const Login = () => {
         <h2>Sign In</h2>
         <p>Please Login To Continue</p>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat culpa
-          voluptas expedita itaque ex, totam ad quod error?
+        <b>"Secure Access to Your Healthcare—Login Now!" 🚀🔒</b>
         </p>
         <form onSubmit={handleLogin}>
           <input
@@ -86,7 +85,9 @@ const Login = () => {
             </Link>
           </div>
           <div style={{ justifyContent: "center", alignItems: "center" }}>
-            <button type="submit">Login</button>
+            <button type="submit" style={{ cursor: "pointer" }}>
+              Login
+            </button>
           </div>
         </form>
       </div>

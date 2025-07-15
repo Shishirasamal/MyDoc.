@@ -1,6 +1,6 @@
 import express from "express";
 import { dbConnection } from "./database/dbConnection.js";
-import { config } from "dotenv";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import fileUpload from "express-fileupload";
@@ -10,11 +10,11 @@ import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
 
 const app = express();
-config({ path: "./config.env" });
+dotenv.config();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL_ONE, process.env.FRONTEND_URL_TWO],
+    origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
     method: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })

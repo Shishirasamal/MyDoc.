@@ -8,6 +8,10 @@
 }
 body {
   background: #e5e5e5;
+  /* background: #24c9f2; */
+  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlQx4GmWROwEp5j_kb3u4NVZImfVmoT0TW_A&s);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .btn {
   padding: 7px 20px;
@@ -165,7 +169,7 @@ h6 {
 }
 .form-component p {
   max-width: 750px;
-  color: gray;
+  color: black;
   margin-bottom: 20px;
 }
 .form-component form {
@@ -222,7 +226,7 @@ h6 {
   margin: 100px auto 20px auto;
 }
 .login-form h2 {
-  color: #000;
+  color: black;
 }
 .register-form h2 {
   color: #000;
@@ -331,7 +335,7 @@ footer .content div ul {
   gap: 10px;
 }
 footer .content div ul a {
-  color: gray;
+  color: blue;
   text-decoration: none;
 }
 footer .content div ul a:hover {
@@ -339,7 +343,7 @@ footer .content div ul a:hover {
   transition: 0.3s;
 }
 footer .content div ul li span {
-  color: gray;
+  color: red;
 }
 footer .content div ul li span:first-child {
   width: 150px;
@@ -388,7 +392,7 @@ footer .content div:last-child div svg {
   padding-bottom: 50px;
 }
 .departments h2 {
-  color: gray;
+  color: black;
   margin-bottom: 30px;
 }
 .card {
@@ -428,6 +432,10 @@ footer .content div:last-child div svg {
   font-weight: 700;
 }
 
+b{
+  color: green;
+}
+
 /**********************************************************************************************************************/
 nav {
   display: flex;
@@ -447,6 +455,9 @@ nav .logo {
   display: flex;
   align-items: center;
   font-size: 2rem;
+}
+nav .logo:hover {
+  cursor: pointer;
 }
 nav .navLinks {
   flex: 2;
@@ -483,10 +494,10 @@ nav .btn {
   z-index: 2;
 }
 nav .logoutBtn {
-  background: linear-gradient(135deg, black, rgb(49, 49, 49));
+  background: linear-gradient(135deg, red, rgb(49, 49, 49));
 }
 nav .loginBtn {
-  background: linear-gradient(135deg, black, rgb(49, 49, 49));
+  background: linear-gradient(135deg, green, rgb(49, 49, 49));
 }
 nav .hamburger {
   display: none;
@@ -581,9 +592,43 @@ input[type="time"]:before {
   color: #444;
   margin-right: 0.5em;
 }
-.logo-img{
+.logo-img {
   width: 150px;
 }
-footer .logo-img{
+footer .logo-img {
   width: 100%;
+}
+
+
+
+
+
+/* Default Light Mode (no .dark on body) */
+body {
+  background-color: #ffffff;
+  color: #000000;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Dark Mode (when body has class 'dark') */
+body.dark {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+/* Example for other elements */
+.navbar,
+header,
+footer {
+  transition: background-color 0.5s ease;
+}
+
+body.dark .navbar,
+body.dark header,
+body.dark footer {
+  background-color: #1f1f1f;
+}
+
+body.dark a {
+  color: #00ffff;
 }
