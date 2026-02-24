@@ -12,14 +12,16 @@ import appointmentRouter from "./router/appointmentRouter.js";
 const app = express();
 dotenv.config();
 
+// ✅ CORS FIX
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
-    method: ["GET", "POST", "DELETE", "PUT"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
 
+// ✅ IMPORTANT
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +32,7 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
+
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/appointment", appointmentRouter);
@@ -37,4 +40,5 @@ app.use("/api/v1/appointment", appointmentRouter);
 dbConnection();
 
 app.use(errorMiddleware);
+
 export default app;

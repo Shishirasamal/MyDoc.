@@ -343,7 +343,7 @@ footer .content div ul a:hover {
   transition: 0.3s;
 }
 footer .content div ul li span {
-  color: red;
+  color: rgb(249, 248, 248);
 }
 footer .content div ul li span:first-child {
   width: 150px;
@@ -494,7 +494,7 @@ nav .btn {
   z-index: 2;
 }
 nav .logoutBtn {
-  background: linear-gradient(135deg, red, rgb(49, 49, 49));
+  background: linear-gradient(135deg, rgb(233, 43, 43), rgb(49, 49, 49));
 }
 nav .loginBtn {
   background: linear-gradient(135deg, green, rgb(49, 49, 49));
@@ -593,7 +593,7 @@ input[type="time"]:before {
   margin-right: 0.5em;
 }
 .logo-img {
-  width: 150px;
+  width: 250px;
 }
 footer .logo-img {
   width: 100%;
@@ -626,7 +626,7 @@ footer {
 body.dark .navbar,
 body.dark header,
 body.dark footer {
-  background-color: #1f1f1f;
+  background-color: #07011b;
 }
 
 body.dark a {

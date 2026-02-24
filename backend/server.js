@@ -1,8 +1,13 @@
 import app from "./app.js";
 import cloudinary from "cloudinary";
-import appointmentRouter from './router/appointmentRouter.js';
-app.use("/api/appointment", appointmentRouter);
 
+import appointmentRouter from "./router/appointmentRouter.js";
+import userRouter from "./router/userRouter.js";
+import messageRouter from "./router/messageRouter.js";
+
+app.use("/api/appointment", appointmentRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/message", messageRouter);
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

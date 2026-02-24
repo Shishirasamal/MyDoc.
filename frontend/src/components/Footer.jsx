@@ -39,13 +39,13 @@ const Footer = () => {
 
   return (
     <>
-      <footer className={"container"} style={{backgroundColor:"rgb(118, 178, 245)"}}>
+      <footer className={"container"} style={{backgroundColor:"rgb(3, 13, 23)"}}>
         <hr />
         <div className="content">
           <div>
             <img src="/logo.png" alt="logo" className="logo-img" />
           </div>
-          <div>
+          <div style = {{color:"white"}}>
             <h4>Quick Links</h4>
             <ul>
               <Link to={"/"}>Home</Link>
@@ -53,7 +53,7 @@ const Footer = () => {
               <Link to={"/about"}>About</Link>
             </ul>
           </div>
-          <div>
+          <div style = {{color:"blue"}}>
             <h4>Hours</h4>
             <ul>
               {hours.map((element) => (
@@ -64,15 +64,15 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          <div>
+          <div style = {{color:"white"}}>
             <h4>Contact</h4>
             <div>
               <FaPhone />
-              <span>+91-1234567890</span>
+              <span>+91-7682056444</span>
             </div>
             <div>
               <MdEmail />
-              <span>quickdoc@gmail.com</span>
+              <span>MyDoc444@gmail.com</span>
             </div>
             <div>
               <FaLocationArrow />
@@ -81,7 +81,7 @@ const Footer = () => {
           </div>
         </div>
         <br></br><br></br>
-        <div><center><p>Copyright © 2021 All Rights Reserved.</p></center></div>
+        <div style = {{color:"white"}}><center><p>Copyright © 2021 All Rights Reserved.</p></center></div>
       </footer>
     </>
   );
