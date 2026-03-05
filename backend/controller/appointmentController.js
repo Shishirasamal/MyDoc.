@@ -1,8 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
 import Appointment from "../models/appointmentSchema.js";
-import User from "../models/userSchema.js";
-import Message from "../models/messageSchema.js"; // ✅ ADD THIS
+import {User} from "../models/userSchema.js";
 import { sendEmail } from "../utils/emailUtil.js";
 
 /* ================= POST APPOINTMENT ================= */
@@ -21,18 +20,18 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
     doctor_firstName,
     doctor_lastName,
     address,
+    consultationType,
   } = req.body;
 
-  // 🔴 VALIDATION
   if (
     !firstName || !lastName || !email || !phone || !nic ||
     !dob || !gender || !appointment_date || !appointment_time ||
-    !department || !doctor_firstName || !doctor_lastName || !address
+    !department || !doctor_firstName || !doctor_lastName ||
+    !address || !consultationType
   ) {
     return next(new ErrorHandler("Please fill the full form!", 400));
   }
 
-  // 🔴 FIND DOCTOR
   const doctor = await User.findOne({
     firstName: doctor_firstName,
     lastName: doctor_lastName,
@@ -44,9 +43,19 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Doctor not found", 404));
   }
 
-  // 🔴 CHECK PATIENT LOGIN
   if (!req.user || !req.user._id) {
     return next(new ErrorHandler("Patient not authenticated", 401));
+  }
+
+  // ✅ GENERATE JITSI LINK
+  let meetingLink = null;
+
+  if (consultationType === "Online") {
+    const roomName = `HMS-${doctor_firstName}-${firstName}-${appointment_date}-${appointment_time}`
+      .replace(/\s+/g, "")
+      .replace(/:/g, "-");
+
+    meetingLink = `https://meet.jit.si/${roomName}#config.requireDisplayName=false&config.prejoinPageEnabled=false`;
   }
 
   // ✅ CREATE APPOINTMENT
@@ -66,33 +75,36 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
       lastName: doctor_lastName,
     },
     address,
+    consultationType,
+    meetingLink,
     doctorId: doctor._id,
     patientId: req.user._id,
   });
 
-  // ✅ CREATE MESSAGE (🔥 THIS FIXES YOUR PROBLEM)
-  // ✅ CREATE MESSAGE (FIXED)
-await Message.create({
-  firstName,
-  lastName,
-  email,
-  phone,
-  message: `New Appointment Booked
+  // ✅ EMAIL TEXT
+  let emailText = `Dear ${firstName},
 
-Patient: ${firstName} ${lastName}
+Your appointment request has been received.
+
 Doctor: Dr. ${doctor_firstName} ${doctor_lastName}
 Department: ${department}
 Date: ${appointment_date}
 Time: ${appointment_time}
-Address: ${address}`,
-});
+Consultation Type: ${consultationType}
+`;
 
+  if (consultationType === "Online") {
+    emailText += `
 
-  // 📧 EMAIL
+Join Video Call:
+${meetingLink}
+`;
+  }
+
   await sendEmail({
     to: email,
-    subject: "Appointment Received",
-    text: `Dear ${firstName}, your appointment request has been received successfully.`,
+    subject: "Appointment Confirmation",
+    text: emailText,
   });
 
   res.status(201).json({
@@ -101,6 +113,29 @@ Address: ${address}`,
     appointment,
   });
 });
+
+// ✅ GET LOGGED IN PATIENT APPOINTMENTS
+export const getPatientAppointments = catchAsyncErrors(
+  async (req, res, next) => {
+    console.log("REQ.USER:", req.user);
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "Patient not authenticated",
+      });
+    }
+
+    const appointments = await Appointment.find({}).sort({ createdAt: -1 });
+
+    console.log("FOUND APPOINTMENTS:", appointments);
+
+    res.status(200).json({
+      success: true,
+      appointments,
+    });
+  }
+);
 
 /* ================= GET ALL APPOINTMENTS (ADMIN) ================= */
 export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
@@ -116,22 +151,68 @@ export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
 });
 
 /* ================= UPDATE STATUS ================= */
-export const updateAppointmentStatus = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
+export const updateAppointmentStatus = catchAsyncErrors(
+  async (req, res, next) => {
+    const { status } = req.body;
 
-  const appointment = await Appointment.findById(id);
-  if (!appointment) {
-    return next(new ErrorHandler("Appointment not found!", 404));
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return next(new ErrorHandler("Appointment not found", 404));
+    }
+
+    appointment.status = status;
+
+    // ✅ IF ACCEPTED → generate meeting link
+    if (status === "Accepted") {
+      const roomName = `HMS-${appointment.doctor.firstName}-${appointment.firstName}-${appointment.appointment_date}-${appointment.appointment_time}`
+        .replace(/\s+/g, "")
+        .replace(/:/g, "-");
+
+      appointment.meetingLink = `https://meet.jit.si/${roomName}`;
+    }
+
+    await appointment.save();
+
+    // ✅ SEND EMAIL TO PATIENT
+    let emailText = `Dear ${appointment.firstName},
+
+Your appointment status has been updated.
+
+Doctor: Dr. ${appointment.doctor.firstName} ${appointment.doctor.lastName}
+Department: ${appointment.department}
+Date: ${appointment.appointment_date}
+Time: ${appointment.appointment_time}
+New Status: ${status}
+`;
+
+    if (status === "Accepted") {
+      emailText += `
+
+Join Video Call:
+${appointment.meetingLink}
+`;
+    }
+
+    if (status === "Rejected") {
+      emailText += `
+
+Unfortunately, your appointment has been rejected.
+Please book another slot or contact hospital.`;
+    }
+
+    await sendEmail({
+      to: appointment.email,
+      subject: "Appointment Status Updated",
+      text: emailText,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Appointment status updated and email sent",
+    });
   }
-
-  appointment.status = req.body.status;
-  await appointment.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Appointment status updated",
-  });
-});
+);
 
 /* ================= DELETE APPOINTMENT ================= */
 export const deleteAppointment = catchAsyncErrors(async (req, res, next) => {

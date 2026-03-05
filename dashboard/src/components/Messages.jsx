@@ -15,10 +15,10 @@ const Messages = () => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/v1/message/getall",
+          "http://localhost:4000/api/v1/appointment/patient",
           { withCredentials: true }
         );
-        setMessages(data.messages);
+        setMessages(data.appointments);
       } catch (error) {
         console.log(error.response?.data?.message || "Error fetching messages");
       }

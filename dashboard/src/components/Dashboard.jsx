@@ -3,8 +3,7 @@ import { Context } from "../main";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { GoCheckCircleFill } from "react-icons/go";
-import { AiFillCloseCircle, AiFillDelete } from "react-icons/ai"; // Import delete icon
+import { AiFillDelete } from "react-icons/ai";
 
 const Dashboard = () => {
   const [appointments, setAppointments] = useState([]);
@@ -15,11 +14,11 @@ const Dashboard = () => {
     const fetchAppointments = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/v1/appointment/getall",
+          "http://localhost:4000/api/v1/appointment/patient",
           { withCredentials: true }
         );
         setAppointments(data.appointments || []);
-        setTotalAppointments(data.appointments.length || 0);
+        setTotalAppointments(data.appointments?.length || 0);
       } catch (error) {
         setAppointments([]);
       }
@@ -31,13 +30,9 @@ const Dashboard = () => {
           "http://localhost:4000/api/v1/user/doctors",
           { withCredentials: true }
         );
-        setTotalDoctors(data.doctors.length || 0);
+        setTotalDoctors(data.doctors?.length || 0);
       } catch (error) {
         setTotalDoctors(0);
-        console.error(
-          "Error fetching doctors:",
-          error.response?.data || error.message
-        );
       }
     };
 
@@ -52,12 +47,19 @@ const Dashboard = () => {
         { status },
         { withCredentials: true }
       );
+
+      // Update status + meetingLink if backend sends it
       setAppointments((prev) =>
-        prev.map((a) => (a._id === appointmentId ? { ...a, status } : a))
+        prev.map((a) =>
+          a._id === appointmentId
+            ? { ...a, status, meetingLink: data.meetingLink || a.meetingLink }
+            : a
+        )
       );
+
       toast.success(data.message);
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error updating status");
     }
   };
 
@@ -65,14 +67,16 @@ const Dashboard = () => {
     try {
       await axios.delete(
         `http://localhost:4000/api/v1/appointment/delete/${appointmentId}`,
-        { withCredentials: true, }
+        { withCredentials: true }
       );
+
       setAppointments((prev) =>
         prev.filter((a) => a._id !== appointmentId)
       );
+
       toast.success("Appointment deleted successfully.");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete appointment.");
+      toast.error("Failed to delete appointment.");
     }
   };
 
@@ -87,20 +91,16 @@ const Dashboard = () => {
           <div className="content">
             <div>
               <p>Hello ,</p>
-              <h5>{admin && `${admin.firstName} ${admin.lastName}`} </h5>
+              <h5>{admin && `${admin.firstName} ${admin.lastName}`}</h5>
             </div>
-            <p>
-              Welcome to the dashboard. Manage appointments, track doctor
-              registrations, and oversee daily operations with ease. This
-              platform streamlines healthcare coordination and ensures smooth
-              workflow.
-            </p>
           </div>
         </div>
+
         <div className="secondBox">
           <p>Total Appointments</p>
           <h3>{totalAppointments}</h3>
         </div>
+
         <div className="thirdBox">
           <p>Registered Doctors</p>
           <h3>{totalDoctors}</h3>
@@ -109,6 +109,7 @@ const Dashboard = () => {
 
       <div className="banner">
         <h5>Appointments</h5>
+
         <table>
           <thead>
             <tr>
@@ -117,32 +118,67 @@ const Dashboard = () => {
               <th>Time</th>
               <th>Doctor</th>
               <th>Department</th>
+              <th>Type</th>
+              <th>Join</th>
               <th>Status</th>
-              <th>Visited</th>
               <th>Delete</th>
             </tr>
           </thead>
+
           <tbody>
             {appointments.length > 0 ? (
               appointments.map((appointment) => (
                 <tr key={appointment._id}>
-                  <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
-                  <td>{appointment.appointment_date.substring(0, 16)}</td>
+                  <td>
+                    {appointment.firstName} {appointment.lastName}
+                  </td>
+                  <td>{appointment.appointment_date}</td>
                   <td>{appointment.appointment_time}</td>
-                  <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
+                  <td>
+                    {appointment.doctor?.firstName}{" "}
+                    {appointment.doctor?.lastName}
+                  </td>
                   <td>{appointment.department}</td>
+
+                  {/* Consultation Type */}
+                  <td>{appointment.consultationType}</td>
+
+                  {/* JOIN BUTTON LOGIC */}
+                  <td>
+                    {appointment.consultationType === "Online" &&
+                    appointment.status === "Accepted" &&
+                    appointment.meetingLink ? (
+                      <a
+                        href={appointment.meetingLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          background: "green",
+                          color: "white",
+                          padding: "6px 12px",
+                          borderRadius: "6px",
+                          textDecoration: "none",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Join
+                      </a>
+                    ) : (
+                      <span style={{ color: "gray" }}>
+                        Not Available
+                      </span>
+                    )}
+                  </td>
+
+                  {/* STATUS DROPDOWN */}
                   <td>
                     <select
-                      className={
-                        appointment.status === "Pending"
-                          ? "value-pending"
-                          : appointment.status === "Accepted"
-                          ? "value-accepted"
-                          : "value-rejected"
-                      }
                       value={appointment.status}
                       onChange={(e) =>
-                        handleUpdateStatus(appointment._id, e.target.value)
+                        handleUpdateStatus(
+                          appointment._id,
+                          e.target.value
+                        )
                       }
                     >
                       <option value="Pending">Pending</option>
@@ -150,17 +186,18 @@ const Dashboard = () => {
                       <option value="Rejected">Rejected</option>
                     </select>
                   </td>
-                  <td>
-                    {appointment.hasVisited ? (
-                      <GoCheckCircleFill className="green" />
-                    ) : (
-                      <AiFillCloseCircle className="red" />
-                    )}
-                  </td>
+
+                  {/* DELETE BUTTON */}
                   <td>
                     <button
-                      onClick={() => handleDeleteAppointment(appointment._id)}
-                      className="delete-btn"
+                      onClick={() =>
+                        handleDeleteAppointment(appointment._id)
+                      }
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
                       <AiFillDelete size={20} color="red" />
                     </button>
@@ -169,7 +206,7 @@ const Dashboard = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="8">No Appointments Found!</td>
+                <td colSpan="9">No Appointments Found!</td>
               </tr>
             )}
           </tbody>

@@ -72,21 +72,32 @@ export const login = catchAsyncErrors(async (req, res, next) => {
     { expiresIn: "7d" }
   );
 
-  // ✅ SET COOKIE (VERY IMPORTANT)
-  res.cookie("adminToken", token, {
-    httpOnly: true,
-    secure: false, // change to true in production
-    sameSite: "lax",
-  });
+  // ✅ FIX: Set cookie based on role ONLY
+  if (role === "Admin") {
+    res.cookie("adminToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+  }
 
- res
-  .status(200)
-  .cookie("patientToken", token, {
-    httpOnly: true,
-    secure: false,          // VERY IMPORTANT for localhost
-    sameSite: "lax",        // VERY IMPORTANT
-  })
-  .json({
+  if (role === "Patient") {
+    res.cookie("patientToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+  }
+
+  if (role === "Doctor") {
+    res.cookie("doctorToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+  }
+
+  res.status(200).json({
     success: true,
     message: "Login Successfully!",
   });

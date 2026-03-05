@@ -43,8 +43,8 @@ const Login = () => {
     >
       <img src="/logo.png" alt="logo" className="logo" style={{ height: "270px" }} />
 
-      <h1 className="form-title">WELCOME TO QUICKDOC.</h1>
-      <p><b>Only Admins Are Allowed To Access These Resources!</b></p>
+      <h1 className="form-title">Welcome To MyDoc..</h1>
+      <p><b>Only Admins & Doctors Are Allowed To Access These Resources!</b></p>
 
       <form onSubmit={handleLogin}>
         <input

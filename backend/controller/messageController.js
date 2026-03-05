@@ -1,7 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
 import { sendEmail } from "../utils/emailUtil.js";
-import User from "../models/userSchema.js";
+import {User} from "../models/userSchema.js";
 import Message from "../models/messageSchema.js";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";

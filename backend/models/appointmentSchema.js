@@ -1,41 +1,32 @@
 import mongoose from "mongoose";
-import validator from "validator";
 
 const appointmentSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
-    minLength: 3,
   },
   lastName: {
     type: String,
     required: true,
-    minLength: 3,
   },
   email: {
     type: String,
     required: true,
-    validate: validator.isEmail,
   },
   phone: {
     type: String,
     required: true,
-    minLength: 10,
-    maxLength: 10,
   },
   nic: {
     type: String,
     required: true,
-    minLength: 12,
-    maxLength: 12,
   },
   dob: {
-    type: Date,
+    type: String,
     required: true,
   },
   gender: {
     type: String,
-    enum: ["Male", "Female"],
     required: true,
   },
   appointment_date: {
@@ -54,28 +45,33 @@ const appointmentSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
   },
-  hasVisited: {
-    type: Boolean,
-    default: false,
-  },
   address: {
     type: String,
     required: true,
   },
+  consultationType: {
+    type: String,
+    enum: ["Offline", "Online"],
+    required: true,
+  },
+  meetingLink: {
+    type: String,
+    default: null,
+  },
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    ref: "User",
   },
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
   status: {
     type: String,
-    enum: ["Pending", "Accepted", "Rejected"],
     default: "Pending",
   },
 }, { timestamps: true });
 
-export default mongoose.model("Appointment", appointmentSchema);
+const Appointment = mongoose.model("Appointment", appointmentSchema);
+
+export default Appointment;

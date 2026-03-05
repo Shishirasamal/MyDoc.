@@ -14,7 +14,7 @@ router.post("/send-otp", async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000);
   otpStore[email] = { otp, expires: Date.now() + 60000 };
 
-  await sendEmail(email, "QuickDoc OTP", `Your OTP is ${otp}`);
+  await sendEmail(email, "MyDoc. OTP", `Your OTP is ${otp}`);
   res.json({ message: "OTP sent to email" });
 });
 

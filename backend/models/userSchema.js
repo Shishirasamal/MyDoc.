@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Male", "Female"],
+    enum: ["Male", "Female", "Others"],
     required: true,
   },
   password: {
@@ -52,20 +52,12 @@ const userSchema = new mongoose.Schema({
     enum: ["Patient", "Doctor", "Admin"],
     required: true,
   },
-  otp: {
-  type: String,
-},
 
-otpExpire: {
-  type: Date,
-},
-
-
-  /* 🔐 LOGIN OTP (if needed) */
+  // LOGIN OTP
   otp: String,
   otpExpire: Date,
 
-  /* 🔐 FORGOT PASSWORD OTP */
+  // FORGOT PASSWORD OTP
   resetOtp: String,
   resetOtpExpire: Date,
 
@@ -80,22 +72,16 @@ otpExpire: {
   },
 });
 
-/* HASH PASSWORD */
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-
-/* COMPARE PASSWORD */
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-/* JWT */
 userSchema.methods.generateJsonWebToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES,
@@ -103,4 +89,3 @@ userSchema.methods.generateJsonWebToken = function () {
 };
 
 export const User = mongoose.model("User", userSchema);
-export default User;
