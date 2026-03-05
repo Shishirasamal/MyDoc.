@@ -210,6 +210,18 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     },
   });
 
+  // Aadhaar validation
+if (!/^\d{12}$/.test(nic)) {
+  return next(new ErrorHandler("Aadhaar number must be exactly 12 digits.", 400));
+}
+
+// DOB future check
+const today = new Date();
+const birthDate = new Date(dob);
+
+if (birthDate > today) {
+  return next(new ErrorHandler("Date of Birth cannot be a future date.", 400));
+}
   res.status(200).json({
     success: true,
     message: "New Doctor Registered",

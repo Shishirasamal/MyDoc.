@@ -17,8 +17,6 @@ const AppointmentForm = () => {
   const [doctorLastName, setDoctorLastName] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
-
-  // ✅ NEW STATE
   const [consultationType, setConsultationType] = useState("Offline");
 
   const departmentsArray = [
@@ -54,6 +52,22 @@ const AppointmentForm = () => {
 
   const handleAppointment = async (e) => {
     e.preventDefault();
+
+    /* ✅ Aadhaar Validation */
+    if (!/^\d{12}$/.test(nic)) {
+      toast.error("Aadhaar number must be exactly 12 digits.");
+      return;
+    }
+
+    /* ✅ DOB Future Check */
+    const today = new Date();
+    const birthDate = new Date(dob);
+
+    if (birthDate > today) {
+      toast.error("Date of Birth cannot be a future date.");
+      return;
+    }
+
     try {
       const hasVisitedBool = Boolean(hasVisited);
 
@@ -72,7 +86,7 @@ const AppointmentForm = () => {
           department,
           doctor_firstName: doctorFirstName,
           doctor_lastName: doctorLastName,
-          consultationType, // ✅ IMPORTANT
+          consultationType,
           hasVisited: hasVisitedBool,
           address,
         },
@@ -84,7 +98,6 @@ const AppointmentForm = () => {
 
       toast.success(data.message);
 
-      // Reset form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -110,6 +123,7 @@ const AppointmentForm = () => {
     <div className="container form-component appointment-form">
       <h2>Appointment</h2>
       <form onSubmit={handleAppointment}>
+
         <div>
           <input
             type="text"
@@ -118,7 +132,9 @@ const AppointmentForm = () => {
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            required
           />
+
           <input
             type="text"
             pattern="[A-Za-z\s]+"
@@ -126,41 +142,60 @@ const AppointmentForm = () => {
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            required
           />
         </div>
 
         <div>
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
+
           <input
-            type="number"
+            type="text"
             placeholder="Mobile Number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            maxLength="10"
+            onChange={(e) =>
+              setPhone(e.target.value.replace(/\D/g, ""))
+            }
+            required
           />
         </div>
 
         <div>
+          {/* ✅ Aadhaar Fixed */}
           <input
-            type="number"
-            placeholder="Adhar No."
+            type="text"
+            placeholder="Aadhaar Number"
             value={nic}
-            onChange={(e) => setNic(e.target.value)}
+            maxLength="12"
+            onChange={(e) =>
+              setNic(e.target.value.replace(/\D/g, ""))
+            }
+            required
           />
+
+          {/* ✅ DOB Future Disabled */}
           <input
             type="date"
-            placeholder="Date of Birth"
             value={dob}
+            max={new Date().toISOString().split("T")[0]}
             onChange={(e) => setDob(e.target.value)}
+            required
           />
         </div>
 
         <div>
-          <select value={gender} onChange={(e) => setGender(e.target.value)}>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            required
+          >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -218,6 +253,7 @@ const AppointmentForm = () => {
             disabled={!department}
           >
             <option value="">Select Doctor</option>
+
             {doctors
               .filter((doctor) => doctor.doctorDepartment === department)
               .map((doctor, index) => (
@@ -236,9 +272,9 @@ const AppointmentForm = () => {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Address"
+          required
         />
 
-        {/* ✅ CONSULTATION TYPE RADIO BUTTONS */}
         <div style={{ marginTop: "15px" }}>
           <p><b>Consultation Type:</b></p>
 
@@ -272,6 +308,7 @@ const AppointmentForm = () => {
           }}
         >
           <p style={{ marginBottom: 0 }}>Have you visited before?</p>
+
           <input
             type="checkbox"
             checked={hasVisited}
@@ -283,6 +320,7 @@ const AppointmentForm = () => {
         <button style={{ margin: "20px auto", cursor: "pointer" }}>
           GET APPOINTMENT
         </button>
+
       </form>
     </div>
   );
