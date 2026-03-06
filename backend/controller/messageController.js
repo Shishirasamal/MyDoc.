@@ -158,3 +158,36 @@ const user = await User.findOne({ email }).select("+password");
     user,
   });
 });
+
+/* ================= DELETE MESSAGE ================= */
+
+export const deleteMessage = async (req, res) => {
+  try {
+
+    const message = await Message.findById(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found"
+      });
+    }
+
+    await message.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Message deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Error deleting message"
+    });
+
+  }
+};
